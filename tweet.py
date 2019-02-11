@@ -12,7 +12,7 @@ ACCESS_TOKEN_SECRET=os.getenv("ACCESS_TOKEN_SECRET")
 
 TWEET_ENDPOINT = "https://api.twitter.com/1.1/statuses/update.json"
 HATEBU_IT_RSS = "http://b.hatena.ne.jp/hotentry/it.rss"
-TWEETED_URL_PATH = "./url.txt"
+TWEETED_URL_PATH = "/tmp/url.txt"
 
 def main():
   text = scraping()
@@ -23,6 +23,10 @@ def scraping():
   d = feedparser.parse(HATEBU_IT_RSS)
 
   text = ""
+  if not os.path.isfile():
+    with open(TWEETED_URL_PATH, 'w'):
+      pass
+
   with open(TWEETED_URL_PATH, "r") as f:
     lines = f.readlines()
     for entry in d.entries:
@@ -53,15 +57,17 @@ def tweet(text):
                           ACCESS_TOKEN,
                           ACCESS_TOKEN_SECRET)
 
-  print(text)
+  response = twitter.post(TWEET_ENDPOINT, params = {"status" : "" + text})
   print(CONSUMER_KEY)
-  response = twitter.post(TWEET_ENDPOINT, params = {"status" : text})
+  print(text)
 
   if response.status_code == 200:
     print("Success.")
+    print(response)
   else:
     print("Failed. : %d"% response.status_code)
-
+    print(response.headers['x-rate-limit-remaining'])
+    print(response.headers['x-rate-limit-reset'])
 
 if __name__ == '__main__':
   main()
