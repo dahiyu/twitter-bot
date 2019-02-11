@@ -1,15 +1,18 @@
 # coding:utf-8
 
-import config
+import os
 import requests
 import feedparser
 from requests_oauthlib import OAuth1Session
-from bs4 import BeautifulSoup
+
+CONSUMER_KEY=os.getenv("CONSUMER_KEY")
+CONSUMER_SECRET=os.getenv("CONSUMER_SECRET")
+ACCESS_TOKEN=os.getenv("ACCESS_TOKEN")
+ACCESS_TOKEN_SECRET=os.getenv("ACCESS_TOKEN_SECRET")
 
 TWEET_ENDPOINT = "https://api.twitter.com/1.1/statuses/update.json"
-# HATEBU_IT_URL = "http://b.hatena.ne.jp/hotentry/it"
 HATEBU_IT_RSS = "http://b.hatena.ne.jp/hotentry/it.rss"
-TWEETED_URL_PATH = "./text.txt"
+TWEETED_URL_PATH = "./url.txt"
 
 def main():
   text = scraping()
@@ -17,10 +20,6 @@ def main():
     tweet(text)
 
 def scraping():
-  # html = requests.get(HATEBU_IT_URL)
-  # soup = BeautifulSoup(html.text, "lxml")
-  # print(soup.select("#container > div.wrapper > div > div.entrylist-main > section > div > ul > li > div > div.entrylist-contents-main > h3 > a"))
-  # return soup.title.string
   d = feedparser.parse(HATEBU_IT_RSS)
 
   text = ""
@@ -49,10 +48,10 @@ def existsEntry(entry, lines):
   return exists
 
 def tweet(text):
-  twitter = OAuth1Session(config.CONSUMER_KEY,
-                          config.CONSUMER_SECRET,
-                          config.ACCESS_TOKEN,
-                          config.ACCESS_TOKEN_SECRET)
+  twitter = OAuth1Session(CONSUMER_KEY,
+                          CONSUMER_SECRET,
+                          ACCESS_TOKEN,
+                          ACCESS_TOKEN_SECRET)
 
   response = twitter.post(TWEET_ENDPOINT, params = {"status" : text})
 
