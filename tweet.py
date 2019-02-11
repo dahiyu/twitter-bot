@@ -53,6 +53,8 @@ def tweet(text):
                           ACCESS_TOKEN,
                           ACCESS_TOKEN_SECRET)
 
+  print(text)
+  print(CONSUMER_KEY)
   response = twitter.post(TWEET_ENDPOINT, params = {"status" : text})
 
   if response.status_code == 200:
