@@ -23,7 +23,7 @@ def scraping():
   d = feedparser.parse(HATEBU_IT_RSS)
 
   text = ""
-  if not os.path.isfile():
+  if not os.path.exists(TWEETED_URL_PATH):
     with open(TWEETED_URL_PATH, 'w'):
       pass
 
